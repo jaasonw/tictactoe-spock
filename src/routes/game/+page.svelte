@@ -4,12 +4,13 @@
   import GameSquare from "$lib/game-square.svelte";
   import Logo from "$lib/logo.svelte";
   import { currentUser, pb } from "$lib/pocketbase";
-  import { onMount } from "svelte";
+  import { onDestroy, onMount } from "svelte";
 
   let board: string[][] = create2d(3);
   let start = "X";
   let turn = "X";
   let winner: string | null = null;
+  let unsubscribe: () => void;
 
   const toggleTurn = () => {
     turn = turn == "X" ? "O" : "X";
@@ -58,7 +59,7 @@
     board = JSON.parse(state.board_state);
     turn = state.turn;
 
-    pb.collection("games").subscribe($gameId, function (e) {
+    unsubscribe = await pb.collection("games").subscribe($gameId, function (e) {
       board = JSON.parse(e.record.board_state);
       turn = e.record.turn;
     });
@@ -71,6 +72,11 @@
     if (win) alert(`${win} is the winner`);
     else if (isFilled(board)) alert("Tie");
   }
+
+  // clean up when navigate to a different page
+  onDestroy(() => {
+    unsubscribe?.();
+  });
 </script>
 
 <div class="flex justify-center items-center content-center w-9/12 bg-cyan-700">
@@ -94,7 +100,10 @@
       </p>
     </div>
     <div class="flex justify-center">
-      <div id="game-grid" class="grid grid-cols-3 w-96 content-center">
+      <div
+        id="game-grid"
+        class="grid grid-cols-3 w-96 content-center justify-items-center"
+      >
         {#each [...Array(9).keys()] as e}
           <GameSquare
             on:click={() => {

@@ -38,6 +38,7 @@
   },
   "type": "module",
   "dependencies": {
+    "@netlify/classnames-template-literals": "^1.0.3",
     "pocketbase": "^0.9.0"
   },
   "prettier": {
