@@ -1,6 +1,6 @@
-import { writable } from 'svelte/store';
+import { writable } from "svelte/store";
 
-export const gameId = writable('sdovay3ol4191f3');
+export const gameId = writable("");
 
 /**
  * Utility function to map 2d array indices to a 1d array. Given the number of
@@ -76,7 +76,7 @@ export function checkWin(board: string[][]) {
  */
 export function isFilled(board: any[]) {
   return board
-    .map((e: any[]) => e.some((e: string) => e == ''))
+    .map((e: any[]) => e.some((e: string) => e == ""))
     .every((e: boolean) => e == false);
 }
 
@@ -86,6 +86,6 @@ export function isFilled(board: any[]) {
  * @param initial (Optional) default = ""
  * @returns
  */
-export function create2d(n: number, initial = '') {
+export function create2d(n: number, initial: any = "") {
   return [...Array(n)].map((_) => Array(n).fill(initial));
 }

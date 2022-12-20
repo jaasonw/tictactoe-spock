@@ -1,7 +1,20 @@
 <script lang="ts">
-  import { goto } from '$app/navigation';
-  import { currentUser, logOut } from '$lib/pocketbase';
-  import { gameId } from './game';
+  import { goto } from "$app/navigation";
+  import { currentUser, logOut, pb } from "$lib/pocketbase";
+
+  import { create2d, gameId } from "./game";
+
+  // reset the game id when we come back here
+  $gameId = "";
+  const createRoom = async () => {
+    const game = await pb.collection("games").create({
+      board_state: JSON.stringify(create2d(3)),
+      player_1: [pb.authStore.model?.id],
+      turn: "X",
+    });
+    $gameId = game.id;
+    goto("/game");
+  };
 </script>
 
 {#if $currentUser}
@@ -9,10 +22,11 @@
     class="bg-amber-100 outline outline-amber-900 outline-8 w-5/6 sm:w-2/5 p-5 flex flex-col justify-center items-center"
   >
     <form class="flex flex-col items-center gap-2" on:submit|preventDefault>
-      <p class="text-m font-bold outline rounded outline-amber-900 w-64">
-        Authenticated as: {$currentUser.email}
+      <p class="text-m font-bold">
+        Authenticated as: {$currentUser.username}
       </p>
       <button
+        on:click={createRoom}
         class="bg-white hover:bg-amber-900 text-amber-900 font-semibold hover:text-white py-1 px-4 border border-amber-900 hover:border-transparent rounded my-0 w-full m-0"
       >
         Create Room
@@ -27,7 +41,7 @@
         type="submit"
         value="Join with code"
         on:click={() => {
-          goto('/game');
+          goto("/game");
         }}
         class="bg-white hover:bg-amber-900 text-amber-900 font-semibold hover:text-white py-1 px-4 border border-amber-900 hover:border-transparent rounded my-0 w-full mx-0"
       />

@@ -1,9 +1,10 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from "svelte";
+
   const dispatch = createEventDispatcher();
 
   function onClick() {
-    dispatch('click', 'button');
+    dispatch("click", "button");
   }
 </script>
 
