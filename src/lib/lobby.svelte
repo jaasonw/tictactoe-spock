@@ -9,7 +9,7 @@
   const createRoom = async () => {
     const game = await pb.collection("games").create({
       board_state: JSON.stringify(create2d(3)),
-      player_1: [pb.authStore.model?.id],
+      player_1: [$currentUser?.id],
       turn: "X",
     });
     $gameId = game.id;

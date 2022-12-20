@@ -10,6 +10,8 @@
   let start = "X";
   let turn = "X";
   let winner: string | null = null;
+  let player_1 = "";
+  let player_2 = "";
   let unsubscribe: () => void;
 
   const toggleTurn = () => {
@@ -22,8 +24,8 @@
 
   const updateTile = async (i: number, j: number) => {
     const gameState = await getGameState();
-    if (turn == "X" && gameState.player_1[0] != pb.authStore.model?.id) return;
-    if (turn == "O" && gameState.player_2[0] != pb.authStore.model?.id) return;
+    if (turn == "X" && gameState.player_1[0] != $currentUser?.id) return;
+    if (turn == "O" && gameState.player_2[0] != $currentUser?.id) return;
     if (!isFilled(board) && winner == null && !board[i][j]) {
       board[i][j] = turn;
       toggleTurn();
