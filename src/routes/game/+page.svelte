@@ -24,8 +24,9 @@
 
   const updateTile = async (i: number, j: number) => {
     const gameState = await getGameState();
-    if (turn == "X" && gameState.player_1[0] != $currentUser?.id) return;
-    if (turn == "O" && gameState.player_2[0] != $currentUser?.id) return;
+
+    if (turn == "X" && gameState.player_1 != $currentUser?.id) return;
+    if (turn == "O" && gameState.player_2 != $currentUser?.id) return;
     if (!isFilled(board) && winner == null && !board[i][j]) {
       board[i][j] = turn;
       toggleTurn();
