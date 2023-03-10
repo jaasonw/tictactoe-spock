@@ -1,4 +1,6 @@
 <script lang="ts">
+  import { ClientResponseError } from "pocketbase";
+
   import Logo from "./logo.svelte";
   import { pb } from "./pocketbase";
 
@@ -10,25 +12,28 @@
     try {
       await pb.collection("users").authWithPassword(username, password);
     } catch (e) {
-      errorMessage = `Failed authenticate: ${e}`;
+      errorMessage = `Failed to authenticate: Invalid username or password`;
       console.error(e);
     }
   }
 
   async function signUp() {
     try {
-      if (password.length < 8) {
-        throw "Password must be greater than 8 characters";
-      }
       await pb.collection("users").create({
         username: username,
         password: password,
         passwordConfirm: password,
       });
       await login();
-    } catch (e) {
-      errorMessage = `Failed to authenticate: ${e}`;
-      console.error(e);
+    } catch (e: unknown) {
+      if (!(e instanceof ClientResponseError)) return;
+      if ("username" in e.data.data)
+        errorMessage = `Invalid username: ${e.data.data.username.message}`;
+      else if ("password" in e.data.data)
+        errorMessage = `Invalid password: ${e.data.data.password.message}`;
+      else
+        errorMessage = `Failed to create account: ${e.data.data.name.message}`;
+      console.error(e.data.data);
     }
   }
 </script>
